@@ -35,6 +35,7 @@ class WaitPage extends Component {
 
   connectToWebsocket() {
     websocket.connect();
+    console.log(websocket.client)
     websocket.listen((type, msgObj) => {
       if (type === 'message') {
         if (msgObj.type === 'joinedUsers') this.updateJoinedUsers(msgObj.data.joinedUsers);

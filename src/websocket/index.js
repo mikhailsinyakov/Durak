@@ -4,7 +4,7 @@ const websocket = {
   client: null,
   connect() {
     if (!this.client) {
-      this.client = new w3cwebsocket('wss://durak-app.herokuapp.com/', 'echo-protocol');
+      this.client = new w3cwebsocket('wss://durak-app.herokuapp.com:80/', 'echo-protocol');
     }
   },
   listen(fn) {
