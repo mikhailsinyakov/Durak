@@ -13,14 +13,14 @@ app.get('/', function(req, res) {
 });
 
 const server = http.createServer(app);
-server.listen(process.env.PORT || 80, () => console.log('Server is listening...'));
+server.listen(process.env.PORT, () => console.log('Server is listening...'));
 
 const wsServer = new WebSocketServer({
   httpServer: server,
   autoAcceptConnections: false
 });
 
-const originIsAllowed = origin => origin === 'https://durak-app.herokuapp.com:80/';
+const originIsAllowed = origin => origin === 'https://durak-app.herokuapp.com/';
 
 let id = 0;
 
