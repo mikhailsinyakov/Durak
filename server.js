@@ -25,11 +25,11 @@ const originIsAllowed = origin => origin === 'https://durak-app.herokuapp.com/';
 let id = 0;
 
 wsServer.on('request', request => {
-  console.log('request')
-  if (!originIsAllowed(request.origin)) {
+  console.log(request.origin)
+  /*if (!originIsAllowed(request.origin)) {
     request.reject();
     return;
-  }
+  }*/
   const userId = id++;
   const connection = request.accept('echo-protocol', request.origin);
   websocketHandler.addUser(userId, connection);
