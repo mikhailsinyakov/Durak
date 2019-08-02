@@ -1,0 +1,31 @@
+.wait-page {
+  box-sizing: border-box;
+  position: absolute;
+  transform: translate(15vw, 15vh);
+  width: 70vw;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2rem;
+  background: #afab38;
+  transition: transform 1s cubic-bezier(.8,-.5,.2,1.4);
+}
+
+.wait-page.hide {
+  transform: translate(15vw, -70vh);
+}
+
+.wait-page .info {
+  margin: 2rem 0;
+  min-width: 18rem;
+}
+
+.wait-page button {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+.wait-page .cancel-button {
+  color: red;
+}

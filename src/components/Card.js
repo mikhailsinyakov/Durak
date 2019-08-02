@@ -9,8 +9,8 @@ class Card extends Component {
   }
 
   render() {
-    const { id, rotation, coords, side, activePlayer, lastDeckCard } = this.props;
-    const { possibleCards, startGame, makeMove, cardStyles, 
+    const { id, rotation, coords, side, activePlayer } = this.props;
+    const { possibleCards, makeMove, cardStyles, 
             updateCardStyles, movedCard, addMovedCard, removeMovedCard } = this.context;
     const { imageElement } = this;
     const { cardSize } = gameConfig;
@@ -32,7 +32,7 @@ class Card extends Component {
       elem.style.transform = style.transform;
       elem.style.transformOrigin = style.transformOrigin;
       elem.style.transition = transition ? '0.3s' : '0s';
-      elem.style.cursor = lastDeckCard || (activePlayer && !darker) ? 'pointer' : 'auto';
+      elem.style.cursor = activePlayer && !darker ? 'pointer' : 'auto';
       elem.style.filter = darker ? 'url("#darker")' : 'none';
     };
 
@@ -65,8 +65,10 @@ class Card extends Component {
     };
   
     const onClick = () => {
-      if (lastDeckCard) startGame();
-      if (activePlayer && !darker) makeMove(id);
+      if (activePlayer && !darker) {
+        makeMove(id);
+        if (movedCard === id) setTimeout(removeMovedCard, 300);
+      }
     };
   
     return (

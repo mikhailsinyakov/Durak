@@ -2,9 +2,9 @@ import React from 'react';
 import * as helpers from '../lib/helpers';
 import '../stylesheets/Arrow.css';
 
-const Arrow = ({field, defenderIndex, playersCount}) => {
+const Arrow = ({field, defenderIndex, playersCount, userIndex}) => {
 	if (defenderIndex === null) return null;
-	const angle = defenderIndex * 360 / playersCount;
+	const angle = (defenderIndex - userIndex) * 360 / playersCount;
 	const fromCenter = (field.width - field.playerSpace * 2) / 2 - 35;
 	const relativeToCenter = helpers.findRightTriangleSides(
 		angle + 95,

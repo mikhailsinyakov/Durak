@@ -3,13 +3,13 @@ import Card from './Card';
 import * as helpers from '../lib/helpers';
 
 const PlayerCards = props => {
-  const { players, playerCardsPosition } = props;
+  const { players, playerCardsPosition, userIndex } = props;
   const allCards = [];
 
   for (const [playerIndex, cards] of players.entries()) {
     const { angle, ...placeCenter } = playerCardsPosition[playerIndex];
     for (const [cardIndex, card] of cards.entries()) {
-      const oneCardShift = playerIndex === 0 ? 20 : 5;
+      const oneCardShift = playerIndex === userIndex ? 20 : 5;
       const shift = (cardIndex - (cards.length - 1) / 2) * oneCardShift;
       const relativeToPlaceCenter = helpers.findRightTriangleSides(
         angle,
@@ -24,8 +24,8 @@ const PlayerCards = props => {
         ...card,
         rotation: angle,
         coords,
-        side: playerIndex === 0 ? 'front' : 'back',
-        activePlayer: playerIndex === 0
+        side: playerIndex === userIndex ? 'front' : 'back',
+        activePlayer: playerIndex === userIndex
       });
     }
   }

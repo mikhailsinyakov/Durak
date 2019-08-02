@@ -17,7 +17,6 @@ const DeckCards = props => {
     const rotation = card.trump ? 90 : 0;
     return {
       ...card,
-      lastDeckCard: i === 51,
       coords,
       rotation,
       side: card.trump ? 'front' : 'back'

@@ -1,33 +1,34 @@
 import config from './gameConfig';
-import * as helpers from '../lib/helpers';
+import * as helpers from './helpers';
 
-const gameState = {
-  cards: {
-    deck: [],
-    players: [],
-    table: [],
-    discarded: []
-  },
-  userIndex: 0,
-  trumpSuit: null,
-  loser: null,
-  attacker: null,
-  defender: null,
-  defendSucceed: null,
-  activePlayers: {
-    players: []
-  },
-  maxAttacks: 0,
-  observable: {
-    subscriber: null,
-    subscribe(fn) {
-      this.subscriber = fn;
-      return () => this.subscriber = null;
-    },
-    update(updates) {
-      this.subscriber(updates);
-    }
-  },
+class GameState {
+  constructor(mode) {
+    this.cards = {
+      deck: [],
+      players: [],
+      table: [],
+      discarded: []
+    };
+    this.userIndex = 0;
+    this.trumpSuit = null;
+    this.attacker = null;
+    this.defender = null;
+    this.defendSucceed = null;
+    this.activePlayers = {
+      players: []
+    };
+    this.maxAttacks = 0;
+    this.observable = {
+      subscriber: null,
+      subscribe(fn) {
+        this.subscriber = fn;
+        return () => this.subscriber = null;
+      },
+      update(updates) {
+        this.subscriber(updates);
+      }
+    };
+  }
   initNewGame(playersNumber) {
     const deckCards = this.shuffleCards(this.genCards());
     const playerCards = Array.from({length: playersNumber}, () => ([]));
@@ -37,7 +38,7 @@ const gameState = {
       players: playerCards
     };
     this.observable.update([{ prop: 'cards', value: this.cards }]);
-  },
+  }
   genCards() {
     const ranks = [
       '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'
@@ -59,7 +60,7 @@ const gameState = {
     }
 
     return cards;
-  },
+  }
   shuffleCards(cards) {
     const cardsCopy = helpers.getDeepCopy(cards);
 
@@ -71,14 +72,14 @@ const gameState = {
     }
 
     return cardsCopy;
-  },
+  }
   startGame() {
     this.dealCards();
     this.chooseTrump();
     this.clearGameProps();
-  },
+  }
   dealCards() {
-    const dealerIndex = this.loser === null ? this.userIndex : this.loser;
+    const dealerIndex = this.userIndex;
     const playersNumber = this.cards.players.length;
     const getNextIndex = index => index + 1 === playersNumber ? 0 : index + 1;
     let index = getNextIndex(dealerIndex);
@@ -87,7 +88,7 @@ const gameState = {
       this.observable.update([{ prop: 'cards', value: this.cards }]);
       index = getNextIndex(index);
     }
-  },
+  }
   chooseTrump() {
     const deckCards = helpers.getDeepCopy(this.cards.deck);
     const randomIndex = Math.floor(Math.random() * deckCards.length);
@@ -104,7 +105,7 @@ const gameState = {
       { prop: 'cards', value: this.cards },
       { prop: 'trumpSuit', value: this.trumpSuit }
     ]);
-  },
+  }
   dealOneCard(playerIndex) {
     const deckCards = helpers.getDeepCopy(this.cards.deck);
     const playerCards = helpers.getDeepCopy(this.cards.players);
@@ -117,7 +118,7 @@ const gameState = {
       players: playerCards
     };
     this.sortPlayerCards();
-  },
+  }
   sortPlayerCards() {
     const isTrump = card => card.suit === this.trumpSuit;
     const isEqualSuit = (card1, card2) => {
@@ -141,10 +142,10 @@ const gameState = {
       ...this.cards,
       players: playerCards
     };
-  },
+  }
   clearGameProps() {
     this.defendSucceed = null;
-  },
+  }
   startTrick() {
     if (this.getNumberOfActivePlayers() < 2) this.endGame();
     else {
@@ -158,10 +159,10 @@ const gameState = {
         this.updateActivePlayerTimers();
       }
     }
-  },
+  }
   getNumberOfActivePlayers() {
     return this.cards.players.filter(cards => cards.length).length;
-  },
+  }
   updateActivePlayers() {
     const activePlayers = [];
     for (const [playerIndex, cards] of this.cards.players.entries()) {
@@ -175,7 +176,7 @@ const gameState = {
         activePlayers.push(playerObject);
       }
     }
-
+    const gameState = this;
     this.activePlayers = {
       players: activePlayers,
       isPlayerInGame(index) {
@@ -204,7 +205,7 @@ const gameState = {
             playerObject)
       }
     };
-  },
+  }
   updateAttackerAndDefender() {
     if (this.defendSucceed === null) this.defineAttackerAndDefenderByLowestTrump();
     else if (this.defendSucceed) {
@@ -223,7 +224,7 @@ const gameState = {
       { prop: 'attacker', value: this.attacker },
       { prop: 'defender', value: this.defender }
     ])
-  },
+  }
   defineAttackerAndDefenderByLowestTrump() {
     const playerCards = this.cards.players;
     const playersNumber = playerCards.length;
@@ -249,21 +250,21 @@ const gameState = {
       this.attacker = randomIndex;
     }
     this.defender = this.activePlayers.getNextIndex(this.attacker);
-  },
+  }
   updateMaxAttacks() {
     this.maxAttacks = Math.min(
       this.cards.players[this.defender].length,
       config.maxAttacks
     );
-  },
+  }
   sendPossibleCardsToUser(possibleCards) {
     if (!possibleCards) possibleCards = this.findPossibleCards(this.userIndex);
     this.observable.update([{prop: 'possibleCards', value: possibleCards}]);
-  },
+  }
   findPossibleCards(playerIndex) {
     if (playerIndex === this.defender) return this.findCardsForDefend(playerIndex);
     else return this.findCardsForAttack(playerIndex);
-  },
+  }
   findCardsForAttack(playerIndex) {
     const attacks = this.cards.table;
     const playerCards = this.cards.players[playerIndex];
@@ -277,7 +278,7 @@ const gameState = {
     const tableCardRanks = tableCards.map(card => card.rank);
     return playerCards.filter(card => tableCardRanks.includes(card.rank))
                       .map(card => card.id);
-  },
+  }
   findCardsForDefend(playerIndex) {
     const playerCards = this.cards.players[playerIndex];
     const notBeatenAttacks = this.cards.table
@@ -296,7 +297,7 @@ const gameState = {
       });
     }
     return possibleCards;
-  },
+  }
   makeDecision(playerIndex) {
     const possibleCards = this.findPossibleCards(playerIndex);
     if (possibleCards.length) {
@@ -320,7 +321,7 @@ const gameState = {
       if (!pass) return cardId;
       else return null;
     } 
-  },
+  }
   makeMove(playerIndex, cardId) {
     const isDefender = playerIndex === this.defender;
     const card = this.getCardById(cardId);
@@ -339,7 +340,7 @@ const gameState = {
       players: playerCards
     };
     this.observable.update([{ prop: 'cards', value: this.cards }]);
-  },
+  }
   addCardToTable(card, defendCard) {
     const tableCards = helpers.getDeepCopy(this.cards.table);
     if (defendCard) {
@@ -358,7 +359,7 @@ const gameState = {
     } 
     
     return [ ...this.cards.table, [ card] ];
-  },
+  }
   getCardById(id) {
     for (const place in this.cards) {
       for (const elem of this.cards[place]) {
@@ -371,7 +372,7 @@ const gameState = {
         }
       }
     }
-  },
+  }
   getHigherCard(a, b) {
     if (a.suit === b.suit) {
       if (a.value > b.value) return a;
@@ -379,7 +380,7 @@ const gameState = {
     }
     if (a.suit === this.trumpSuit) return a;
     return b;
-  },
+  }
   updateActivePlayerTimers() {
     const isUserInGame = this.activePlayers.isPlayerInGame(this.userIndex);
     let userHasNoPossibleCards = isUserInGame ? false : true;
@@ -416,14 +417,14 @@ const gameState = {
     if (this.activePlayers.playersDontHaveTimers() && userHasNoPossibleCards) {
       this.endTrick();
     }
-  },
+  }
   endTrick() {
     this.defendSucceed = this.cards.table.reduce((bool, attack) =>
       attack.length === 1 ? false : bool, true);
 
     this.clearTable();
     this.drawCardsFromDeck();
-  },
+  }
   clearTable() {
     const playerCards = helpers.getDeepCopy(this.cards.players[this.defender]);
     const discardedCards = helpers.getDeepCopy(this.cards.discarded);
@@ -442,7 +443,7 @@ const gameState = {
     };
     this.sortPlayerCards();
     this.observable.update([{ prop: 'cards', value: this.cards }]);
-  },
+  }
   drawCardsFromDeck() {
     const playersNumber = this.cards.players.length;
     let playersDrawnCards = 0;
@@ -477,7 +478,7 @@ const gameState = {
       index = index - 1;
       if (index === -1) index = playersNumber - 1;
     }
-  },
+  }
   endGame() {
     let loser = null;
     for (const [playerIndex, cards] of this.cards.players.entries()) {
@@ -486,22 +487,28 @@ const gameState = {
         break;
       }
     }
-    this.loser = loser;
     this.trumpSuit = null;
+    this.cards = {
+      deck: [],
+      players: [],
+      table: [],
+      discarded: []
+    };
     this.observable.update([
       { prop: 'isPlaying', value: false },
       { prop: 'trumpSuit', value: null },
       { prop: 'attacker', value: null },
-      { prop: 'defender', value: null }
+      { prop: 'defender', value: null },
+      { prop: 'loser', value: loser }
     ]);
-  },
+  }
   makeUserMove(cardId) {
     const possibleCards = this.findPossibleCards(this.userIndex);
     if (possibleCards.includes(cardId)) {
       this.makeMove(this.userIndex, cardId);
       this.updateActivePlayerTimers();
     }
-  },
+  }
   pass() {
     this.activePlayers.userPass();
     this.observable.update([{prop: 'possibleCards', value: []}])
@@ -509,4 +516,4 @@ const gameState = {
   }
 };
 
-export default gameState;
+export default GameState;

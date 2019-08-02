@@ -6,7 +6,7 @@ import DiscardedCards from './DiscardedCards';
 import * as helpers from '../lib/helpers';
 
 const Cards = props => {
-  const { cards, field, players } = props;
+  const { cards, field, players, userIndex } = props;
   const findPlayerCardsPosition = () => {
     const avgSide = (field.width + field.height) / 2;
     const fromCenterToPlayerCards = avgSide / 2 - field.playerSpace / 2;
@@ -14,7 +14,7 @@ const Cards = props => {
     return Array.from(
       { length: players.length },
       (_, i) => {
-        const angle = i * 360 / players.length;
+        const angle = (i - userIndex) * 360 / players.length;
         const relativeToCenterCoords = helpers.findRightTriangleSides(
           angle + 90,
           fromCenterToPlayerCards
@@ -30,7 +30,7 @@ const Cards = props => {
 
   const placeCenters = {
     deck: {
-      x: field.width * 0.33,
+      x: field.width * 0.36,
       y: field.height * 0.5
     },
     table: {
@@ -38,7 +38,7 @@ const Cards = props => {
       y: field.height * 0.48
     },
     discarded: {
-      x: field.width * 1.2,
+      x: field.width * 1.7,
       y: field.height * 0.5
     }
   };
@@ -46,7 +46,11 @@ const Cards = props => {
   return (
     <Fragment>
       <DeckCards cards={cards.deck} placeCenter={placeCenters.deck} />
-      <PlayerCards players={cards.players} playerCardsPosition={findPlayerCardsPosition()} />
+      <PlayerCards 
+        players={cards.players} 
+        playerCardsPosition={findPlayerCardsPosition()} 
+        userIndex={userIndex}
+      />
       <TableCards attacks={cards.table} placeCenter={placeCenters.table} />
       <DiscardedCards cards={cards.discarded} placeCenter={placeCenters.discarded} />
     </Fragment>
