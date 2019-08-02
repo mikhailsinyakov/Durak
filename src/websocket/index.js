@@ -4,13 +4,12 @@ const websocket = {
   client: null,
   connect() {
     if (!this.client) {
-      this.client = new w3cwebsocket('ws://localhost:8080/', 'echo-protocol');
+      this.client = new w3cwebsocket('wss://durak-app.herokuapp.com/', 'echo-protocol');
     }
   },
   listen(fn) {
     this.client.onclose = () => fn('closed');
     this.client.onerror = error => fn('error', error);
-    //this.client.onopen = () => fn('open');
     this.client.onmessage = message => 
       fn('message', JSON.parse(message.data));
   },
