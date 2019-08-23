@@ -4,10 +4,12 @@ import App from './components/App';
 import './stylesheets/index.css';
 import * as serviceWorker from './serviceWorker';
 
+const lang = window.location.pathname === '/ru' ? 'ru' : 'en';
+if (lang === 'ru') document.title = 'Дурак';
+
 ReactDOM.render(
-  <App />,
+  <App lang={lang} />,
   document.getElementById('root')
 );
 
-// @TODO to learn about
 serviceWorker.unregister();

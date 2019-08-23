@@ -7,7 +7,6 @@ const PassButton = ({show, text, onClick}) => {
     cursor: show ? 'pointer' : 'default'
   };
 
-
   return (
     <g
       className="pass-button"

@@ -3,14 +3,24 @@ const express = require('express');
 const path = require('path');
 const WebSocketServer = require('websocket').server;
 const websocketHandler = require('./lib/websocketHandler');
+require('dotenv').config();
+
+const isRussian = acceptLanguage => {
+	const languages = acceptLanguage.match(/[a-zA-Z\-]{2,10}/g) || [];
+	const language = languages[0] || 'en';
+	return language === 'ru' || language === 'ru-RU';
+};
 
 const app = express();
-
-app.use(express.static(path.join(__dirname, 'build')));
-
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
+  const acceptLanguage = req.header('Accept-Language');
+	if (isRussian(acceptLanguage)) res.redirect('/ru');
+  else res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/ru', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+app.use(express.static(path.join(__dirname, 'build')));
 
 const server = http.createServer(app);
 server.listen(process.env.PORT, () => console.log('Server is listening...'));
@@ -20,7 +30,7 @@ const wsServer = new WebSocketServer({
   autoAcceptConnections: false
 });
 
-const originIsAllowed = origin => origin === 'https://durak-app.herokuapp.com';
+const originIsAllowed = origin => origin === process.env.APP_URL;
 
 let id = 0;
 

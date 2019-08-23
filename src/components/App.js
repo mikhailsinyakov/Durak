@@ -281,6 +281,7 @@ class App extends Component {
 		const field = helpers.getFieldProps(this.state.viewport);
 		return (
 			<AppContext.Provider value={{
+				lang: this.props.lang,
 				cardStyles: this.cardStyles, 
 				possibleCards: this.state.possibleCards, 
 				trumpSuit: this.state.trumpSuit, 
@@ -321,7 +322,9 @@ class App extends Component {
 						/>
 						<PassButton
 							show={this.state.showButton}
-							text={this.state.defender === this.state.userIndex ? 'Pick up' : 'Pass'}
+							text={this.state.defender === this.state.userIndex ? 
+								this.props.lang === 'ru' ? 'Взять' : 'Pick up' : 
+								this.props.lang === 'ru' ? 'Пас' : 'Pass'}
 							onClick={this.state.showButton ? this.pass : null}
 						/>
 						<Arrow 
