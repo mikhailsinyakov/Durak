@@ -17,7 +17,7 @@ class WaitPage extends Component {
   }
 
   updateJoinedUsers(joinedUsers) {
-    this.setState({ joinedUsers, playersNumber: this.state.playersNumber });
+    this.setState({ joinedUsers });
   }
 
   confirm() {
@@ -58,25 +58,28 @@ class WaitPage extends Component {
   }
 
   render() {
-    const { isWaiting, playersNumber } = this.props;
+    const { field, isWaiting, playersNumber } = this.props;
     const { joinedUsers, userConfirms } = this.state;
     const { lang } = this.context;
+    const style = {
+      width: field.width - field.playerSpace * 2 + 'px',
+      height: field.width - field.playerSpace * 2 + 'px',
+    };
 
     return (
-      <div className={`wait-page ${!isWaiting ? 'hide' : ''}`}>
+      <div className={`wait-page ${!isWaiting ? 'hide' : ''}`} style={style}>
         <h1>{lang === 'ru' ? 'Ожидание Игроков' : 'Wait for Users'}</h1>
+        <img src="/images/loading.png" />
         <div className="info">
-          {!!joinedUsers.length && 
-            <p><b>{lang === 'ru' ? 'Присоединившиеся Игроки: ' : 'Joined Users: '}</b>
-              {joinedUsers.map((user, i) => 
-                <span key={i}>{i ? ', ' + user : ' ' + user}</span>)}
-            </p>
-          }
-          <p><b>{lang === 'ru' ? 'Осталось Ждать: ' : 'Remains to wait: '}</b> 
-            {playersNumber - joinedUsers.length}</p>
-          {userConfirms && <p>{lang === 'ru' ? 
-            'Ожидание Подтверждения Игроков' : 
-            'Waiting for Users to Confirm'}</p>}
+          {Array.from({length: playersNumber})
+            .map((user, i) => (
+              <div 
+                className={`user-block ${joinedUsers[i] && joinedUsers[i].confirm ? 
+                  'confirm' : ''}`} 
+                key={i}>
+                {joinedUsers[i] ? joinedUsers[i].username : ''}
+              </div>
+            ))}
         </div>
         <div className="buttons">
           <button className="cancel-button" onClick={this.cancel}>

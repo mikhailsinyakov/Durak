@@ -1,7 +1,7 @@
 import React from 'react';
 import '../stylesheets/PassButton.css';
 
-const PassButton = ({show, text, onClick}) => {
+const PassButton = ({show, text, pass}) => {
   const style = {
     opacity: show ? 1 : 0,
     cursor: show ? 'pointer' : 'default'
@@ -11,7 +11,10 @@ const PassButton = ({show, text, onClick}) => {
     <g
       className="pass-button"
       style={style}
-      onClick={onClick}
+      onClick={e => {
+        e.preventDefault();
+        pass();
+      }}
     >
       <rect />
       <text>{text}</text>

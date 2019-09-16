@@ -1,23 +1,24 @@
 .menu {
   box-sizing: border-box;
   position: absolute;
-  transform: translate(15vw, 15vh);
-  width: 70vw;
-  height: 70vh;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 2rem;
   background: #a0d255;
-  transition: transform 1s cubic-bezier(.8,-.5,.2,1.4);
+  transition: top 1s cubic-bezier(.8,-.5,.2,1.4), opacity 1s;
 }
 
 .menu.hide {
-  transform: translate(15vw, -70vh);
+  top: -50%;
+  opacity: 1;
 }
 
 .menu-items {
-  margin: 2rem 0;
+  margin: 1.5rem 0;
 }
 
 .menu-item {
@@ -26,11 +27,10 @@
 
 .menu-item-name {
   font-weight: bold;
-  margin-right: 2rem;
+  margin-right: 0.5rem;
 }
 
 .menu-item-option {
-  margin-right: 0.5rem;
   padding: 0.1rem 0.2rem;
 }
 
@@ -46,6 +46,7 @@
   padding: 0.1rem 0.3rem;
   border: 1px solid #98c598;
   border-radius: 0.5rem;
+  width: 45%;
 }
 
 .menu-item input::placeholder {

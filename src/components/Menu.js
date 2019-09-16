@@ -7,7 +7,12 @@ const MenuItemOption = props => {
   return (
     <span 
       className={`menu-item-option ${currOption === option ? 'current' : ''}`}
-      onClick={currOption !== option ? () => changeItem(option) : null}
+      onClick={currOption !== option ? 
+        e => {
+          e.preventDefault();
+          changeItem(option);
+        } 
+        : null}
       style={{ cursor: currOption !== option ? 'pointer' : 'default' }}
     >
       {optionText}
@@ -16,7 +21,7 @@ const MenuItemOption = props => {
 };
 
 const Menu = props => {
-  const { username, mode, playersNumber, changeName, changeMode, isPlaying,
+  const { field, username, mode, playersNumber, changeName, changeMode, isPlaying,
           changePlayersNumber, startGame, waitUsers, saveUserSettings } = props;
           
   const input = React.createRef();
@@ -43,10 +48,15 @@ const Menu = props => {
     }
   };
 
+  const style = {
+    width: field.width - field.playerSpace * 2 + 'px',
+    height: field.width - field.playerSpace * 2 + 'px',
+  };
+
   return (
     <AppContext.Consumer>
       { ({lang}) => (
-        <div className={`menu ${isPlaying ? 'hide' : ''}`}>
+        <div className={`menu ${isPlaying ? 'hide' : ''}`} style={style}>
           <h1>{lang === 'ru' ? 'Меню' : 'Menu'}</h1>
           <div className="menu-items">
             <label className="menu-item">
@@ -57,22 +67,22 @@ const Menu = props => {
             </label>
             <div className="menu-item">
               <span className="menu-item-name">
-                {lang === 'ru' ? 'Режим:' : 'Mode:'}
+                {lang === 'ru' ? 'Играю:' : 'Mode:'}
               </span>
               <MenuItemOption 
                 changeItem={changeMode} currOption={mode} 
                 option="single-player" 
-                optionText={lang === 'ru' ? 'С Компьютером' : 'Single Player'}
+                optionText={lang === 'ru' ? 'Один' : 'Single Player'}
               />
               <MenuItemOption 
                 changeItem={changeMode} currOption={mode}
                 option="multiplayer" 
-                optionText={lang === 'ru' ? 'С Другими Игроками' : 'Multiplayer'}
+                optionText={lang === 'ru' ? 'С друзьями' : 'Multiplayer'}
               />
             </div>
             <div className="menu-item">
               <span className="menu-item-name">
-                {lang === 'ru' ? 'Число Игроков:' : 'Players Number:'}
+                {lang === 'ru' ? 'Игроков:' : 'Players:'}
               </span>
               <MenuItemOption 
                 changeItem={changePlayersNumber} currOption={playersNumber} 

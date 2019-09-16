@@ -292,6 +292,7 @@ class App extends Component {
 				removeMovedCard: this.removeMovedCard
 			}}>
 				<Menu 
+					field={field}
 					isPlaying={this.state.isPlaying}
 					username={this.state.username}
 					mode={this.state.mode} 
@@ -304,6 +305,7 @@ class App extends Component {
 					saveUserSettings={this.saveUserSettings}
 				/>
 				<WaitPage 
+					field={field}
 					username={this.state.username} 
 					playersNumber={this.state.playersNumber} 
 					isPlaying={this.state.isPlaying}
@@ -325,7 +327,7 @@ class App extends Component {
 							text={this.state.defender === this.state.userIndex ? 
 								this.props.lang === 'ru' ? 'Взять' : 'Pick up' : 
 								this.props.lang === 'ru' ? 'Пас' : 'Pass'}
-							onClick={this.state.showButton ? this.pass : null}
+							pass={this.state.showButton ? this.pass : null}
 						/>
 						<Arrow 
 							field={field}
